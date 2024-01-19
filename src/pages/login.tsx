@@ -1,45 +1,63 @@
-import { Button } from "antd";
+import { Button, Row } from "antd";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm, useFormContext } from "react-hook-form";
 import { useLoginMutation } from "../redux/features/auth/authApi";
 import { useAppDispatch } from "../redux/hooks";
-import { setUser } from "../redux/features/auth/authSlice";
+import { TUser, setUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import PHForm from "../components/form/PHForm";
+import PHInput from "../components/form/PHInput";
 
 const Login = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      id: "A-0001",
-      password: "S12345",
-    },
-  });
+  // const { register, handleSubmit } = useForm({
+  //   defaultValues: {
+  //     id: "A-0001",
+  //     password: "S12345",
+  //   },
+  // });
+
+  // const { register } = useFormContext();
+
+  const defaultValues = {
+    id: "A-0001",
+    password: "S12345",
+  };
 
   const [login, { error }] = useLoginMutation();
 
   console.log("error:", error);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FieldValues) => {
     console.log(data);
-    const res = await login(data).unwrap();
+    const toastId = toast.loading("logging  in");
 
-    const user = verifyToken(res.data.accessToken);
-    console.log("data:", user);
-    dispatch(setUser({ user: user, token: res.data.accessToken }));
+    try {
+      const res = await login(data).unwrap();
+
+      const user = verifyToken(res.data.accessToken) as TUser;
+      console.log("data:", user);
+      dispatch(setUser({ user: user, token: res.data.accessToken }));
+      toast.success("user logged in", { id: toastId, duration: 2000 });
+      navigate(`/${user.role}/dashboard`);
+    } catch (error) {
+      toast.error("something went wrong", { id: toastId, duration: 2000 });
+    }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="id">ID:</label>
-        <input type="text" id="id" {...register("id")} />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input type="text" id="id" {...register("password")} />
-      </div>
+    <Row justify="center" align="middle" style={{ height: "100vh" }}>
+      {" "}
+      <PHForm onSubmit={onSubmit} defaultValues={defaultValues}>
+        <PHInput type="text" name="id" label={"ID:"} />
 
-      <Button htmlType="submit">Login</Button>
-    </form>
+        <PHInput type="text" name="password" label={"Password:"} />
+
+        <Button htmlType="submit">Login</Button>
+      </PHForm>
+    </Row>
   );
 };
 
