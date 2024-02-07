@@ -13,7 +13,30 @@ export const monthsArray = [
   "December",
 ];
 
+export const genderArray = ["Male", "Female", "Other"];
+
+export const bloodGroupArray = [
+  "O+",
+  "O-",
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+];
+
 export const monthsOptions = monthsArray.map((item) => ({
+  value: item,
+  label: item,
+}));
+
+export const genderOptions = genderArray.map((item) => ({
+  value: item.toLowerCase(),
+  label: item,
+}));
+
+export const bloodGroupOptions = bloodGroupArray.map((item) => ({
   value: item,
   label: item,
 }));
