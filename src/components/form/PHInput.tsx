@@ -6,16 +6,17 @@ type TInputProps = {
   type: string;
   name: string;
   label?: string;
+  disabled?: boolean;
 };
 
-export default function PHInput({ type, name, label }: TInputProps) {
+export default function PHInput({ type, name, label, disabled }: TInputProps) {
   return (
     <div style={{ marginBottom: "20px" }}>
       <Controller
         name={name}
         render={({ field }) => (
           <Form.Item label={label}>
-            <Input type={type} id={name} {...field} />
+            <Input type={type} id={name} {...field} disabled={disabled} />
           </Form.Item>
         )}
       />

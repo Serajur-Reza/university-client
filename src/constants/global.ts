@@ -26,6 +26,8 @@ export const bloodGroupArray = [
   "AB-",
 ];
 
+export const daysArray = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 export const monthsOptions = monthsArray.map((item) => ({
   value: item,
   label: item,
@@ -37,6 +39,11 @@ export const genderOptions = genderArray.map((item) => ({
 }));
 
 export const bloodGroupOptions = bloodGroupArray.map((item) => ({
+  value: item,
+  label: item,
+}));
+
+export const daysOptions = daysArray.map((item) => ({
   value: item,
   label: item,
 }));
