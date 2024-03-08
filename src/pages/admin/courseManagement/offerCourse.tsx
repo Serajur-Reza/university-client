@@ -12,7 +12,7 @@ import {
   useAddOfferedCourseMutation,
   useGetAllCoursesQuery,
   useGetAllSemesterRegistrationsQuery,
-  useLazyGetCourseFacultiesQuery,
+  useGetCourseFacultiesQuery,
 } from "../../../redux/features/admin/courseManagementApi";
 import PHSelect from "../../../components/form/PHSelect";
 import { daysOptions } from "../../../constants/global";
@@ -22,7 +22,6 @@ import { toast } from "sonner";
 
 export default function OfferCourse() {
   const [id, setId] = useState("");
-  const [faculties, setFaculties] = useState("");
   const { data: semesterRegistration } =
     useGetAllSemesterRegistrationsQuery(undefined);
   const { data: academicFaculty } = useGetAllAcademicFacultiesQuery(undefined);
@@ -31,7 +30,8 @@ export default function OfferCourse() {
     useGetAllAcademicDepartmentsQuery(undefined);
 
   const { data: courses } = useGetAllCoursesQuery(undefined);
-  const [getCourseFaculties] = useLazyGetCourseFacultiesQuery();
+  const { data: facultiesData, isFetching: fetchFaculties } =
+    useGetCourseFacultiesQuery(id, { skip: !id });
 
   const [addOfferedCourse] = useAddOfferedCourseMutation();
 
@@ -58,8 +58,6 @@ export default function OfferCourse() {
     };
   });
 
-  console.log(courses);
-
   const coursesOptions = courses?.data?.map((item) => {
     return {
       value: item._id,
@@ -67,21 +65,16 @@ export default function OfferCourse() {
     };
   });
 
+  console.log("Fjklfad", facultiesData);
+
+  const facultiesOptions = facultiesData?.data?.faculties?.map((item) => {
+    return {
+      value: item._id,
+      label: item.fullName,
+    };
+  });
+
   console.log("inside parent comp:", id);
-
-  const getCourseFacultiesHandler = async (data) => {
-    console.log(data);
-    setId(data);
-    const res = await getCourseFaculties(data).unwrap();
-    const faculties = res?.data?.faculties?.map((item) => {
-      return {
-        value: item._id,
-        label: item.fullName,
-      };
-    });
-
-    setFaculties(faculties);
-  };
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
@@ -134,13 +127,18 @@ export default function OfferCourse() {
             />
 
             <PHSelectWatch
-              onValueChange={(e) => getCourseFacultiesHandler(e)}
+              onValueChange={(e) => setId(e)}
               label="Course"
               name="course"
               options={coursesOptions}
             />
 
-            <PHSelect label="Faculty" name="faculty" options={faculties} />
+            <PHSelect
+              disabled={!id || fetchFaculties}
+              label="Faculty"
+              name="faculty"
+              options={facultiesOptions}
+            />
 
             <PHInput
               type={"number"}

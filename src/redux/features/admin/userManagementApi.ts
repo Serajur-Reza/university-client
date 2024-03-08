@@ -97,6 +97,17 @@ const userApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    changePassword: builder.mutation({
+      query: (data) => {
+        console.log(data);
+        return {
+          url: `/auth/change-password`,
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -108,4 +119,5 @@ export const {
   useAddAdminMutation,
   useAddFacultyMutation,
   useBlockUserMutation,
+  useChangePasswordMutation,
 } = userApi;

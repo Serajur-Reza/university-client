@@ -160,7 +160,7 @@ export const {
   useGetAllCoursesQuery,
   useGetAllFacultiesQuery,
   useGetAllOfferedCoursesQuery,
-  useLazyGetCourseFacultiesQuery,
+  useGetCourseFacultiesQuery,
   useCreateSemesterRegistrationMutation,
   useCreateCourseMutation,
   useAddFacultiesMutation,
